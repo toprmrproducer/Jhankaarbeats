@@ -2301,27 +2301,94 @@
                     <div class="section-rule" style="margin-top: 24px; margin-bottom: 48px;"><span></span><i></i><span></span></div>
                 </div>
                 
-                <!-- Horizontal layout forced flex inline -->
-                <div class="reveal d1 hosts-container">
-                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
-                        <div>
-                            <span class="host-name" style="font-size: 28px; display:block;">Rohit Ankita Doshi</span>
-                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">President</span>
+                <!-- Auto-gliding hosts marquee -->
+                <div class="hosts-marquee-outer reveal d1">
+                    <div class="hosts-marquee-track">
+                        <!-- SET 1 -->
+                        <div class="host-item">
+                            <span class="host-name">Rohit Ankita Doshi</span>
+                            <span class="host-role">President</span>
                         </div>
-                    </div>
-                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
-                        <div>
-                            <span class="host-name" style="font-size: 28px; display:block;">Asha Tarun Chajjed</span>
-                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">Secretary</span>
+                        <div class="host-divider">✦</div>
+                        <div class="host-item">
+                            <span class="host-name">Asha Tarun Chajjed</span>
+                            <span class="host-role">Secretary</span>
                         </div>
-                    </div>
-                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
-                        <div>
-                            <span class="host-name" style="font-size: 28px; display:block;">Ravi Manisha Hirani</span>
-                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">Entertainment Director</span>
+                        <div class="host-divider">✦</div>
+                        <div class="host-item">
+                            <span class="host-name">Ravi Manisha Hirani</span>
+                            <span class="host-role">Entertainment Director</span>
                         </div>
+                        <div class="host-divider">✦</div>
+                        <!-- SET 2 (duplicate for seamless loop) -->
+                        <div class="host-item">
+                            <span class="host-name">Rohit Ankita Doshi</span>
+                            <span class="host-role">President</span>
+                        </div>
+                        <div class="host-divider">✦</div>
+                        <div class="host-item">
+                            <span class="host-name">Asha Tarun Chajjed</span>
+                            <span class="host-role">Secretary</span>
+                        </div>
+                        <div class="host-divider">✦</div>
+                        <div class="host-item">
+                            <span class="host-name">Ravi Manisha Hirani</span>
+                            <span class="host-role">Entertainment Director</span>
+                        </div>
+                        <div class="host-divider">✦</div>
                     </div>
                 </div>
+                <style>
+                    .hosts-marquee-outer {
+                        width: 100%;
+                        overflow: hidden;
+                        padding: 16px 0 40px;
+                        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+                        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+                    }
+                    .hosts-marquee-track {
+                        display: flex;
+                        align-items: center;
+                        gap: 48px;
+                        width: max-content;
+                        animation: hostsScroll 18s linear infinite;
+                    }
+                    .hosts-marquee-track:hover {
+                        animation-play-state: paused;
+                    }
+                    @keyframes hostsScroll {
+                        0%   { transform: translateX(0); }
+                        100% { transform: translateX(-50%); }
+                    }
+                    .host-item {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                        gap: 8px;
+                        flex-shrink: 0;
+                        min-width: 220px;
+                    }
+                    .host-item .host-name {
+                        font-family: 'Bodoni Moda', serif;
+                        font-size: 26px;
+                        color: var(--dark);
+                        display: block;
+                    }
+                    .host-item .host-role {
+                        font-family: 'Montserrat', sans-serif;
+                        font-size: 11px;
+                        letter-spacing: 0.25em;
+                        text-transform: uppercase;
+                        color: var(--gold);
+                        display: block;
+                    }
+                    .host-divider {
+                        color: rgba(200, 168, 98, 0.4);
+                        font-size: 18px;
+                        flex-shrink: 0;
+                    }
+                </style>
             </section>
             
 
