@@ -1,0 +1,2848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Jhankaar Events — Team Magic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,400;1,6..96,300;1,6..96,400&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@200;300;400&family=Pinyon+Script&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ink: #0D0A07;
+            --gold: #C8A862;
+            --gold-hi: #EDD48A;
+            --gold-lo: #8A6A2A;
+            --cream: #F8F2E8;
+            --warm: #F2EAD8;
+            --parchment: #EDE3CC;
+            --green: #1E3028;
+            --green-mid: #2C4238;
+            --muted: #6A5A42;
+            --r: 201;
+            --g: 168;
+            --b: 76;
+            /* gold in rgb */
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overscroll-behavior: none;
+        }
+
+        body {
+            background: #0a0805;
+            display: block;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.02em;
+            overflow-x: hidden;
+        }
+
+        /* ══════════════════════════════
+   GRAIN OVERLAY — global texture
+══════════════════════════════ */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            pointer-events: none;
+            opacity: 0.028;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 128px 128px;
+        }
+
+        /* ══════════════════════════════
+   SITE WRAPPER — full-width horizontal
+══════════════════════════════ */
+        .phone {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            background: var(--ink);
+        }
+
+        /* ══════════════════════════════
+   CURTAIN GATE
+══════════════════════════════ */
+        #gate {
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            display: flex;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        /* Curtain fabric panels */
+        .curtain {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 1.6s cubic-bezier(0.86, 0, 0.07, 1);
+            will-change: transform;
+        }
+
+        /* Rich velvet-like background with vertical fold gradients */
+        .curtain-l {
+            background:
+                linear-gradient(to right,
+                    #0C1C14 0%,
+                    #1a3424 18%,
+                    #0e2018 35%,
+                    #1e3a28 50%,
+                    #122018 65%,
+                    #1a2e22 82%,
+                    #0e1c14 100%);
+            border-right: 1px solid rgba(200, 168, 98, 0.15);
+        }
+
+        .curtain-r {
+            background:
+                linear-gradient(to left,
+                    #0C1C14 0%,
+                    #1a3424 18%,
+                    #0e2018 35%,
+                    #1e3a28 50%,
+                    #122018 65%,
+                    #1a2e22 82%,
+                    #0e1c14 100%);
+            border-left: 1px solid rgba(200, 168, 98, 0.15);
+        }
+
+        /* Vertical fold lines to simulate draped fabric */
+        .curtain::before,
+        .curtain::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                    transparent,
+                    rgba(200, 168, 98, 0.06) 15%,
+                    rgba(200, 168, 98, 0.12) 50%,
+                    rgba(200, 168, 98, 0.06) 85%,
+                    transparent);
+            pointer-events: none;
+        }
+
+        .curtain-l::before {
+            left: 25%;
+        }
+
+        .curtain-l::after {
+            left: 62%;
+        }
+
+        .curtain-r::before {
+            right: 25%;
+        }
+
+        .curtain-r::after {
+            right: 62%;
+        }
+
+        /* Gold fringe at the bottom edge */
+        .curtain-fringe {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .curtain-fringe::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -4px;
+            right: -4px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--gold-hi), var(--gold), var(--gold-hi), transparent);
+        }
+
+        /* Gold ornament top border on each curtain */
+        .curtain-top-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        /* Gold tassel drop lines on fringe */
+        .fringe-lines {
+            display: flex;
+            justify-content: space-around;
+            padding: 2px 6px 0;
+            height: 100%;
+            align-items: flex-start;
+        }
+
+        .fringe-line {
+            width: 1px;
+            height: 56px;
+            background: linear-gradient(to bottom, var(--gold) 70%, transparent);
+            opacity: 0.5;
+        }
+
+        /* Gate center monogram overlay */
+        #gate-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+            width: 180px;
+        }
+
+        .gate-monogram {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 80px;
+            color: var(--gold-hi);
+            line-height: 1;
+            text-shadow:
+                0 0 60px rgba(200, 168, 98, 0.6),
+                0 0 20px rgba(200, 168, 98, 0.3);
+            display: block;
+        }
+
+        .gate-ornament {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .gate-ornament-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold));
+        }
+
+        .gate-ornament-line.r {
+            background: linear-gradient(to left, transparent, var(--gold));
+        }
+
+        .gate-ornament-diamond {
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .gate-tap {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.7);
+            margin-top: 14px;
+            animation: breathe 2.5s ease-in-out infinite;
+        }
+
+        .gate-tap-arrow {
+            display: block;
+            width: 1px;
+            height: 28px;
+            background: linear-gradient(to bottom, var(--gold-hi), transparent);
+            margin: 10px auto 0;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.35;
+            }
+
+            50% {
+                opacity: 0.9;
+            }
+        }
+
+        /* Open state */
+        #gate.open .curtain-l {
+            transform: translateX(-100%);
+        }
+
+        #gate.open .curtain-r {
+            transform: translateX(100%);
+        }
+
+        #gate.gone {
+            display: none;
+        }
+
+        /* ══════════════════════════════
+   MUSIC CONTROL
+══════════════════════════════ */
+        #music-btn {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 7999;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(14, 32, 24, 0.9);
+            border: 1px solid rgba(200, 168, 98, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        #music-btn.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #music-btn:hover {
+            border-color: rgba(200, 168, 98, 0.7);
+        }
+
+        #music-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--gold-hi);
+        }
+
+        /* Pulse ring when playing */
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        #music-btn.playing::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            animation: pulse-ring 1.8s ease-out infinite;
+        }
+
+        /* ══════════════════════════════
+   INVITATION BODY
+══════════════════════════════ */
+        #invitation {
+            opacity: 0;
+            background: var(--cream);
+            position: relative;
+        }
+
+        #invitation.visible {
+            opacity: 1;
+            animation: inv-fade 1s ease forwards;
+        }
+
+        @keyframes inv-fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ══════════════════════════════
+   HERO — full-width split layout
+══════════════════════════════ */
+        .opening-card {
+            background: var(--green);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* LEFT HALF: villa photo */
+        .hero-photo {
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .hero-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            display: block;
+        }
+
+        /* gradient blending photo into right panel */
+        .hero-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to right,
+                    transparent 55%,
+                    rgba(30, 48, 40, 0.55) 80%,
+                    #1E3028 100%),
+                linear-gradient(to bottom,
+                    rgba(10,20,14,0.25) 0%,
+                    transparent 15%,
+                    transparent 85%,
+                    rgba(10,20,14,0.30) 100%);
+        }
+
+
+        /* RIGHT HALF: invite text panel */
+        .hero-text-panel {
+            background: linear-gradient(160deg, #1E3028 0%, #152218 60%, #1a2e22 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* Leaf decoration on hero right panel */
+        .hero-deco-leaf {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .hero-deco-leaf.tl {
+            top: -40px;
+            left: -60px;
+            width: 320px;
+            opacity: 0.18;
+            transform: rotate(-15deg);
+            mix-blend-mode: luminosity;
+        }
+
+        .hero-deco-leaf.br {
+            bottom: -50px;
+            right: -60px;
+            width: 300px;
+            opacity: 0.15;
+            transform: rotate(165deg);
+            mix-blend-mode: luminosity;
+        }
+
+        /* All child elements of hero-text-panel above the photo */
+        .opening-card > *:not(.hero-photo) {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Subtle radial gold glow */
+        .opening-card-glow {
+            position: absolute;
+            top: 40%;
+            left: 30%;
+            width: 500px;
+            height: 500px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(200, 168, 98, 0.10) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Mobile: stack hero vertically */
+        @media (max-width: 768px) {
+            .opening-card {
+                grid-template-columns: 1fr;
+                grid-template-rows: 55vh auto;
+            }
+
+            .hero-photo {
+                min-height: 55vh;
+            }
+
+            .hero-photo::after {
+                background:
+                    linear-gradient(to bottom,
+                        transparent 50%,
+                        rgba(10,20,14,0.9) 100%);
+            }
+
+            .hero-text-panel {
+                padding: 48px 28px 60px;
+            }
+        }
+
+        /* Corner botanical line art */
+        .corner-art {
+            position: absolute;
+            width: 110px;
+            opacity: 0.18;
+        }
+
+        .corner-art.tl { top: 0; left: 0; }
+        .corner-art.tr { top: 0; right: 0; transform: rotate(90deg); }
+        .corner-art.bl { bottom: 0; left: 0; transform: rotate(270deg); }
+        .corner-art.br { bottom: 0; right: 0; transform: rotate(180deg); }
+
+        .opening-eyebrow {
+            font-size: 9px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.65);
+            margin-bottom: 24px;
+        }
+
+        .opening-title {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 78px;
+            line-height: 1.05;
+            color: var(--gold-hi);
+            text-shadow: 0 0 60px rgba(200, 168, 98, 0.35);
+            margin-bottom: 6px;
+        }
+
+        .opening-rule {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin: 18px auto 22px;
+            max-width: 220px;
+        }
+
+        .opening-rule span {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold));
+        }
+
+        .opening-rule span:last-child {
+            background: linear-gradient(to left, transparent, var(--gold));
+        }
+
+        .opening-rule-diamond {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .opening-subtitle {
+            font-family: 'Cormorant', serif;
+            font-size: 14px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 2;
+            max-width: 260px;
+            margin: 0 auto 32px;
+        }
+
+        .opening-scroll {
+            font-size: 8px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.4);
+            animation: float-down 2s ease-in-out infinite;
+        }
+
+        .opening-scroll::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 36px;
+            background: linear-gradient(to bottom, var(--gold-hi), transparent);
+            margin: 10px auto 0;
+        }
+
+        @keyframes float-down {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(7px);
+            }
+        }
+
+        /* ══════════════════════════════
+   SECTION BASE
+══════════════════════════════ */
+        .section {
+            padding: 64px 28px;
+            background: var(--cream);
+            position: relative;
+        }
+
+        .section.dark {
+            background: var(--green);
+        }
+
+        .section.warm {
+            background: var(--warm);
+        }
+
+        .section.parchment {
+            background: var(--parchment);
+        }
+
+        .section-tag {
+            font-size: 7.5px;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: var(--gold-lo);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .section.dark .section-tag {
+            color: rgba(200, 168, 98, 0.55);
+        }
+
+        .section-heading {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--ink);
+            text-align: center;
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+
+        .section.dark .section-heading {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .section-rule {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 18px auto 36px;
+            max-width: 160px;
+        }
+
+        .section-rule span {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold));
+        }
+
+        .section-rule span:last-child {
+            background: linear-gradient(to left, transparent, var(--gold));
+        }
+
+        .section-rule i {
+            width: 5px;
+            height: 5px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        /* ══════════════════════════════
+   SCROLL REVEAL (PREMIUM BLUR + SPRING)
+══════════════════════════════ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px) scale(0.96);
+            filter: blur(8px);
+            transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal.in {
+            opacity: 1;
+            transform: none;
+            filter: blur(0);
+        }
+
+        .reveal.d1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal.d2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal.d3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal.d4 {
+            transition-delay: 0.45s;
+        }
+
+        /* ══════════════════════════════
+   VIBE / QUOTE
+══════════════════════════════ */
+        .vibe-card {
+            border: 1px solid rgba(200, 168, 98, 0.22);
+            border-radius: 2px;
+            padding: 28px 24px;
+            background: rgba(255, 255, 255, 0.6);
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .vibe-card::before {
+            content: '\201C';
+            position: absolute;
+            top: -8px;
+            left: 18px;
+            font-family: 'Cormorant', serif;
+            font-size: 60px;
+            color: var(--gold);
+            line-height: 1;
+            opacity: 0.3;
+        }
+
+        .vibe-card p {
+            font-family: 'Cormorant', serif;
+            font-size: 17px;
+            font-style: italic;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* ══════════════════════════════
+   EVENT DETAILS STRIP
+══════════════════════════════ */
+        .details-strip {
+            background: var(--green);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            gap: 16px;
+            border-bottom: 1px solid rgba(200, 168, 98, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--gold), var(--gold-lo));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .detail-row:hover {
+            background: rgba(200, 168, 98, 0.05);
+        }
+
+        .detail-row:hover::before {
+            opacity: 1;
+        }
+
+        .detail-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            width: 28px;
+            text-align: center;
+        }
+
+        .detail-text strong {
+            display: block;
+            font-family: 'Bodoni Moda', serif;
+            font-size: 16px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2px;
+        }
+
+        .detail-text span {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            color: rgba(200, 168, 98, 0.5);
+        }
+
+        /* ══════════════════════════════
+   SCRATCH COINS
+══════════════════════════════ */
+        .scratch-section {
+            background: var(--ink);
+            padding: 64px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scratch-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .scratch-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .scratch-section .section-tag {
+            color: rgba(200, 168, 98, 0.5);
+        }
+
+        .scratch-section .section-heading {
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .scratch-hint {
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 40px;
+        }
+
+        .coins-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .coin-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coin-label-tag {
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.9);
+        }
+
+        .coin-container {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+        }
+
+        /* Revealed text beneath canvas */
+        .coin-back {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #2C4238, #1A2820);
+            border: 1px solid rgba(200, 168, 98, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coin-back .val {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 20px;
+            font-weight: 300;
+            color: var(--gold-hi);
+            line-height: 1;
+        }
+
+        .coin-back .unit {
+            font-size: 7px;
+            letter-spacing: 0.25em;
+            color: rgba(200, 168, 98, 0.9);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        canvas.coin-canvas {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* Reveal burst ring */
+        @keyframes burst {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .coin-burst {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .coin-burst.go {
+            animation: burst 0.6s ease-out forwards;
+        }
+
+        /* ══════════════════════════════
+   COUNTDOWN
+══════════════════════════════ */
+        .countdown-wrap {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 340px;
+            margin: 0 auto;
+        }
+
+        .cd-box {
+            text-align: center;
+            padding: 20px 6px 14px;
+            border: 1px solid rgba(200, 168, 98, 0.2);
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Diagonal gold shimmer */
+        .cd-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(105deg,
+                    transparent,
+                    rgba(200, 168, 98, 0.08) 50%,
+                    transparent);
+            transition: left 0.6s ease;
+        }
+
+        .cd-box:hover::before {
+            left: 150%;
+        }
+
+        .cd-num {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 36px;
+            font-weight: 300;
+            color: var(--ink);
+            display: block;
+            line-height: 1;
+        }
+
+        .cd-label {
+            font-size: 7px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: block;
+            margin-top: 8px;
+        }
+
+        /* ══════════════════════════════
+   DRESSCODE
+══════════════════════════════ */
+        .dresscode-card {
+            background: linear-gradient(160deg, #1E3028 0%, #152218 60%, #1A2C20 100%);
+            border-radius: 4px;
+            padding: 40px 28px;
+            text-align: center;
+            border: 1px solid rgba(200, 168, 98, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dresscode-card::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(ellipse at 50% 30%, rgba(200, 168, 98, 0.1) 0%, transparent 55%);
+            pointer-events: none;
+        }
+
+        .dresscode-emoji-row {
+            font-size: 30px;
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dresscode-main-title {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 46px;
+            color: var(--gold-hi);
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .dresscode-desc {
+            font-family: 'Cormorant', serif;
+            font-size: 16px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.9;
+            max-width: 240px;
+            margin: 0 auto 24px;
+        }
+
+        .dresscode-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .dresscode-pill {
+            font-size: 8px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold-hi);
+            border: 1px solid rgba(200, 168, 98, 0.35);
+            border-radius: 100px;
+            padding: 6px 16px;
+            transition: all 0.25s ease;
+            cursor: default;
+        }
+
+        .dresscode-pill:hover {
+            background: rgba(200, 168, 98, 0.1);
+            border-color: var(--gold);
+        }
+
+        /* ══════════════════════════════
+   ORGANIZERS PHOTO
+══════════════════════════════ */
+        .organizers-photo-wrap {
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(200, 168, 98, 0.3);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.35);
+            max-width: 340px;
+            margin: 0 auto;
+        }
+
+        .organizers-photo-wrap img {
+            width: 100%;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .organizers-photo-caption {
+            background: linear-gradient(to top, rgba(10,20,14,0.92) 0%, transparent 100%);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 14px 14px;
+            font-family: 'Cormorant', serif;
+            font-size: 13px;
+            font-style: italic;
+            color: rgba(255,255,255,0.75);
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* ══════════════════════════════
+   HOSTS
+══════════════════════════════ */
+        .hosts-list {
+            list-style: none;
+            max-width: 340px;
+            margin: 0 auto;
+        }
+
+        .host-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(200, 168, 98, 0.12);
+            position: relative;
+        }
+
+        .host-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Hover line accent */
+        .host-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gold), var(--gold-lo));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .host-item:hover::before {
+            opacity: 1;
+        }
+
+        .host-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green-mid), #0E1C14);
+            border: 1px solid rgba(200, 168, 98, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .host-role {
+            font-size: 7.5px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .host-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 17px;
+            font-weight: 300;
+            color: var(--ink);
+        }
+
+        /* ══════════════════════════════
+   TIMELINE / SCHEDULE TEASE
+══════════════════════════════ */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--gold), var(--gold), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0 0 28px 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -4px;
+            top: 4px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 10px rgba(200, 168, 98, 0.4);
+        }
+
+        .timeline-time {
+            font-size: 8px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold-lo);
+            margin-bottom: 3px;
+        }
+
+        .timeline-event {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 17px;
+            font-weight: 300;
+            color: var(--ink);
+        }
+
+        .timeline-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+            font-style: italic;
+            font-family: 'Cormorant', serif;
+        }
+
+        /* ══════════════════════════════
+   RSVP SECTION
+══════════════════════════════ */
+        .rsvp-section {
+            background: linear-gradient(160deg, #0D1A12, #111A0E);
+            padding: 80px 28px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rsvp-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 50% 90%, rgba(200, 168, 98, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .rsvp-top-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .rsvp-eyebrow {
+            font-size: 8px;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.45);
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .rsvp-big-title {
+            font-family: 'Pinyon Script', cursive;
+            font-size: 68px;
+            color: var(--gold-hi);
+            text-shadow: 0 0 40px rgba(200, 168, 98, 0.25);
+            line-height: 1.05;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .rsvp-sub {
+            font-family: 'Cormorant', serif;
+            font-size: 15px;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.4);
+            max-width: 240px;
+            margin: 0 auto 48px;
+            line-height: 1.9;
+            position: relative;
+        }
+
+        .rsvp-btn {
+            display: inline-block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--ink);
+            background: linear-gradient(135deg, var(--gold-hi), var(--gold), var(--gold-lo));
+            padding: 18px 52px;
+            border-radius: 1px;
+            box-shadow:
+                0 8px 40px rgba(200, 168, 98, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .rsvp-btn::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border: 1px solid rgba(200, 168, 98, 0.5);
+            border-radius: 1px;
+            pointer-events: none;
+        }
+
+        .rsvp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 50px rgba(200, 168, 98, 0.45);
+        }
+
+        .rsvp-btn:active {
+            transform: translateY(0);
+        }
+
+        .rsvp-footer {
+            margin-top: 40px;
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        /* ══════════════════════════════
+   STICKY BAR
+══════════════════════════════ */
+        #sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: rgba(10, 15, 10, 0.96);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(200, 168, 98, 0.15);
+            padding: 12px 48px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 6000;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (max-width: 768px) {
+            #sticky-bar { padding: 12px 20px 16px; }
+        }
+
+        #sticky-bar.off {
+            transform: translateY(100%);
+        }
+
+        /* Wide content wrapper — centers content on large screens */
+        .wide-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sections: wider padding on desktop */
+        .section {
+            padding: 80px 60px;
+        }
+        @media (max-width: 768px) {
+            .section { padding: 56px 24px; }
+        }
+
+        /* Dress code image */
+        .dresscode-img {
+            width: 100%;
+            max-width: 560px;
+            margin: 28px auto 0;
+            display: block;
+            border-radius: 4px;
+            filter: drop-shadow(0 8px 32px rgba(0,0,0,0.3));
+        }
+
+        .sticky-info {
+            line-height: 1.4;
+        }
+
+        .sticky-info span {
+            display: block;
+            font-size: 8px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(200, 168, 98, 0.4);
+        }
+
+        .sticky-info strong {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 17px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .sticky-cta {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--ink);
+            background: linear-gradient(135deg, var(--gold-hi), var(--gold));
+            padding: 11px 22px;
+            border-radius: 1px;
+            white-space: nowrap;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .sticky-cta:hover {
+            box-shadow: 0 4px 20px rgba(200, 168, 98, 0.4);
+        }
+
+        /* Map embed */
+        .map-embed {
+            width: 100%;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid rgba(200,168,98,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .map-embed iframe {
+            display: block;
+            width: 100%;
+            height: 220px;
+            border: none;
+        }
+
+        /* ══════════════════════════════
+   PARTICLE CANVAS
+══════════════════════════════ */
+        #particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5999;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #particles.show {
+            opacity: 1;
+        }
+
+        /* ══════════════════════════════
+   PRELOADER & CINEMATIC BARS
+══════════════════════════════ */
+        body.loading-state {
+            overflow: hidden;
+        }
+
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease;
+        }
+
+        .preloader-content {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .progress-ring-circle {
+            stroke-dasharray: 251.2; /* 2 * pi * 40 */
+            stroke-dashoffset: 251.2;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .preloader-je {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Pinyon Script', cursive;
+            font-size: 36px;
+            color: #C8A862;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .shatter-lines {
+            opacity: 0;
+            transform-origin: 50% 50%;
+        }
+
+        .shatter-lines.shatter {
+            animation: shatterOut 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+        @keyframes shatterOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.6); }
+        }
+
+        .cine-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 12vh;
+            background: #000;
+            z-index: 8500;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .cine-bar#cine-top { top: 0; }
+        .cine-bar.cine-bot { bottom: 0; }
+        .cine-bars-out #cine-top { transform: translateY(-100%); }
+        .cine-bars-out .cine-bot { transform: translateY(100%); }
+
+        /* Hide gate initially until preloader finishes */
+        #gate {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* ══════════════════════════════
+   COMPREHENSIVE MOBILE OPTIMIZATION
+══════════════════════════════ */
+
+        /* --- Global wide-content centering on desktop --- */
+        #invitation .section > *,
+        #invitation .scratch-section > *,
+        #invitation .rsvp-section > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- Sections need inner constraint on wide screens --- */
+        .section-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- Opening title scales down --- */
+        .hero-main-title { font-size: 96px; }
+        
+        @media (max-width: 768px) {
+            .opening-title { font-size: 60px; }
+            .hero-main-title { font-size: 64px; }
+        }
+        @media (max-width: 480px) {
+            .opening-title { font-size: 52px; }
+            .hero-main-title { font-size: 46px; }
+            .hero-text-panel { padding: 40px 22px 56px; }
+        }
+
+        /* --- Section headings --- */
+        @media (max-width: 768px) {
+            .section-heading { font-size: 24px; }
+            .scratch-section .section-heading { font-size: 22px; }
+        }
+
+        /* --- Vibe cards: full width on mobile --- */
+        @media (max-width: 768px) {
+            .vibe-card { padding: 22px 18px; }
+        }
+
+        /* --- Details strip --- */
+        @media (max-width: 480px) {
+            .detail-row { padding: 14px 16px; gap: 12px; }
+            .detail-text strong { font-size: 14px; }
+        }
+
+        /* --- Map embed height on mobile --- */
+        @media (max-width: 768px) {
+            .map-embed iframe { height: 180px; }
+        }
+
+        /* --- Countdown grid: 2x2 on very small screens --- */
+        @media (max-width: 380px) {
+            .countdown-wrap { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .cd-num { font-size: 28px; }
+        }
+
+        /* --- Scratch coins: wrap on small screens --- */
+        @media (max-width: 380px) {
+            .coins-row { gap: 16px; }
+            .coin-container { width: 84px; height: 84px; }
+            canvas.coin-canvas { width: 84px; height: 84px; }
+        }
+
+        /* --- Timeline: full width on mobile --- */
+        @media (max-width: 768px) {
+            .timeline { max-width: 100%; }
+            .timeline-event { font-size: 15px; }
+        }
+
+        /* --- Dresscode card padding --- */
+        @media (max-width: 768px) {
+            .dresscode-card { padding: 28px 20px; }
+            .dresscode-main-title { font-size: 36px; }
+            .dresscode-img { max-width: 100%; }
+        }
+
+        /* --- Organizers photo --- */
+        @media (max-width: 768px) {
+            .organizers-photo-wrap { max-width: 100%; }
+        }
+
+        /* --- Hosts list: more compact on mobile --- */
+        @media (max-width: 480px) {
+            .host-name { font-size: 15px; }
+            .hosts-list { max-width: 100%; }
+        }
+
+        /* --- RSVP section padding --- */
+        @media (max-width: 768px) {
+            .rsvp-section { padding: 64px 24px 80px; }
+            .rsvp-big-title { font-size: 52px; }
+            .rsvp-btn { padding: 16px 36px; }
+        }
+
+        /* --- Scratch section padding --- */
+        @media (max-width: 768px) {
+            .scratch-section { padding: 48px 20px; }
+        }
+
+        /* --- Hero leaf decorations: smaller on mobile --- */
+        @media (max-width: 768px) {
+            .hero-deco-leaf.tl { width: 180px; top: -20px; left: -30px; }
+            .hero-deco-leaf.br { width: 160px; bottom: -20px; right: -30px; }
+        }
+
+        /* --- Sticky bar text size --- */
+        @media (max-width: 480px) {
+            .sticky-info strong { font-size: 14px; }
+            .sticky-cta { font-size: 7px; padding: 10px 16px; }
+        }
+
+    </style>
+    
+    <!-- Premium Styles -->
+    <link rel="stylesheet" href="css/premium.css">
+</head>
+
+<body style="background:#0a140f;">
+
+    <!-- ══════════════════════════════
+     PRELOADER (REMOVED FOR SPEED)
+══════════════════════════════ -->
+    <div id="preloader" style="display:none;"></div>
+
+    <!-- Cinematic Letterbox Bars -->
+    <div id="cine-top" class="cine-bar"></div>
+    <div id="cine-bottom" class="cine-bar cine-bot"></div>
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- Floating Navigation -->
+    <nav id="top-nav">
+        <div class="nav-brand">JE</div>
+        <ul class="nav-links">
+            <li><a href="#vibe" class="nav-link">The Vibe</a></li>
+            <li><a href="#schedule" class="nav-link">Schedule</a></li>
+            <li><a href="#team" class="nav-link">Team</a></li>
+            <li><a href="#rsvp" class="nav-link">RSVP</a></li>
+        </ul>
+        <button class="nav-mobile-btn">☰</button>
+    </nav>
+    <div id="nav-drawer">
+        <a href="#vibe" class="nav-link">The Vibe</a>
+        <a href="#schedule" class="nav-link">Schedule</a>
+        <a href="#team" class="nav-link">Team</a>
+        <a href="#rsvp" class="nav-link">RSVP</a>
+    </div>
+
+    <!-- ══════════════════════════════
+     AUDIO — drop your music file here
+     Replace 'music.mp3' with your actual file path
+══════════════════════════════ -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="Senorita%20Zindagi%20Na%20Milegi%20Dobara%20320%20Kbps.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ══════════════════════════════
+     CURTAIN GATE
+══════════════════════════════ -->
+    <div id="gate">
+        <div class="curtain curtain-l">
+            <div class="curtain-top-border"></div>
+            <div class="curtain-fringe">
+                <div class="fringe-lines">
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gate-center">
+            <div class="gate-ornament">
+                <div class="gate-ornament-line"></div>
+                <div class="gate-ornament-diamond"></div>
+                <div class="gate-ornament-line r"></div>
+            </div>
+            <span class="gate-monogram">JE</span>
+            <div class="gate-ornament" style="margin-top:4px">
+                <div class="gate-ornament-line"></div>
+                <div class="gate-ornament-diamond"></div>
+                <div class="gate-ornament-line r"></div>
+            </div>
+            <p class="gate-tap">Tap to Enter</p>
+            <span class="gate-tap-arrow"></span>
+        </div>
+
+        <div class="curtain curtain-r">
+            <div class="curtain-top-border"></div>
+            <div class="curtain-fringe">
+                <div class="fringe-lines">
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                    <div class="fringe-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════
+     MUSIC BUTTON
+══════════════════════════════ -->
+    <button id="music-btn" title="Toggle Music" aria-label="Toggle Music">
+        <svg id="icon-play" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 4l15 8-15 8V4z" />
+        </svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:none">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+        </svg>
+    </button>
+
+    <!-- ══════════════════════════════
+     FLOATING PARTICLE CANVAS
+══════════════════════════════ -->
+    <canvas id="fire-canvas"></canvas>
+    <canvas id="particles"></canvas>
+
+    <!-- SVG Background Elements for Premium Hawaiian Vibe -->
+    <img src="images/Whisk_0fc5625479d58dd96e84443009865e79dr.svg" style="position:fixed; top:25%; left:-10%; width:70vw; max-width:1000px; z-index:0; opacity:0.03; pointer-events:none; filter:brightness(0.9) sepia(0.8) hue-rotate(-30deg);" alt="" />
+    <img src="images/Whisk_d010176668d3c77adc2434ce1c6c0cbedr.svg" style="position:fixed; bottom:-5%; left:60%; transform:translate(-50%, 0); width:100vw; max-width:1200px; z-index:0; opacity:0.02; pointer-events:none; filter:brightness(1.2) sepia(1) hue-rotate(-20deg);" alt="" />
+    <img src="images/Whisk_a5eee12f625b0edb2de4403a260fffaedr.svg" style="position:fixed; top:65%; right:-5%; width:50vw; max-width:600px; z-index:0; opacity:0.03; pointer-events:none; filter:brightness(0.9) sepia(0.6) hue-rotate(15deg);" alt="" />
+
+    <div class="noise-overlay"></div>
+
+    <!-- ══════════════════════════════
+     PHONE SHELL
+══════════════════════════════ -->
+    <div class="phone">
+        <div id="invitation">
+
+            <!-- ─── OPENING HERO (Full Width) ─── -->
+            <section class="opening-card" style="display:flex; flex-direction:row; align-items:center; position:relative; overflow:hidden; border:none; border-radius:0; height:100vh; width:100vw; margin-left:calc(-50vw + 50%); padding:40px;">
+                <!-- Full Background Villa photo w/o SVG Overlay -->
+                <div style="position:absolute; inset:0; z-index:0; background:#000;">
+                    <img src="assets/original_villa.png" alt="Villa del Sol" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.65) contrast(1.1) saturate(1.2);" />
+                    <div style="position:absolute; inset:0; background:linear-gradient(to right, rgba(8,20,15,0.85) 0%, rgba(8,20,15,0.4) 60%, transparent 100%);"></div>
+                </div>
+
+                <!-- LEFT ALIGNED: Invite text panel -->
+                <div style="position:relative; z-index:2; max-width:600px; text-align:left; background:transparent; padding:0; display:flex; flex-direction:column; justify-content:center; height:100%;">
+                    
+                    <p class="opening-eyebrow reveal" style="text-align:left; margin-bottom:12px; font-size:24px; letter-spacing:0.2em;">Team Magic Presents</p>
+                    
+                    <h1 class="reveal d1 hero-main-title" style="font-family:'Bodoni Moda',serif; color:#fff; line-height:0.9; margin:0 0 32px 0; font-weight:400; letter-spacing:-0.03em; font-size:96px;">
+                        Jhankar<br/><span class="gold-shimmer-text">Beats</span>
+                    </h1>
+
+                    <div class="reveal d2" style="display:flex; align-items:center; gap:16px; margin-bottom:32px;">
+                        <span style="width:60px; height:1px; background:linear-gradient(to right, #C8A862, transparent)"></span>
+                        <div style="width:6px; height:6px; background:#EDD48A; transform:rotate(45deg);"></div>
+                        <span style="width:160px; height:1px; background:linear-gradient(to left, #C8A862, transparent)"></span>
+                    </div>
+
+                    <p class="reveal d3" style="text-align:left; max-width:520px; font-family:'Cormorant',serif; font-style:italic; font-size:32px; color:rgba(255,255,255,0.95); line-height:1.4;">
+                        Ek shaam dosti ke naam&hellip;<br/>
+                        jahaan hogi hasi, masti,<br/>
+                        aur yaadon ka ek khoobsurat safar.
+                    </p>
+                </div>
+
+                <p class="opening-scroll" style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:2;">Scroll</p>
+            </section>
+
+            <!-- ─── SECTION SEPARATOR ─── -->
+            <div class="reveal" style="text-align: center; padding: 20px 0; background: transparent; position: relative; z-index: 5;">
+                <svg width="300" height="20" viewBox="0 0 300 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="sep-path" d="M150 10 L140 0 L150 10 L160 0 L150 10 M145 10 L0 10 M155 10 L300 10" stroke="#C8A862" stroke-width="0.8" stroke-dasharray="400" stroke-dashoffset="400"/>
+                </svg>
+            </div>
+
+
+
+            <!-- ─── VIBE / INTRO ─── -->
+            <section class="section warm" style="position:relative; overflow:hidden;">
+                <!-- Golden Floral Leaves Aesthetic -->
+                <div class="golden-leaves-bg"></div>
+                
+                <div class="reveal" style="position:relative; z-index:2;">
+                    <p class="section-tag" style="font-size:14px;">The Evening</p>
+                    <h2 class="section-heading" style="font-size:54px;">Fun. Friends.<br />Forever.</h2>
+                    <div class="section-rule"><span></span><i></i><span></span></div>
+                </div>
+
+                <div class="reveal d1">
+                    <p style="font-family:'Montserrat',sans-serif; font-size:12px; letter-spacing:0.1em; color:var(--muted); text-align:center; max-width:480px; margin: 0 auto 32px; line-height:1.6">
+                        "Fun games, exciting prizes, aur woh vibe jo sirf saath hone se aati hai. Kyuki kahani khatam nahi hoti… yaadein banti rehti hain. 💫"
+                    </p>
+                </div>
+
+                <!-- Premium Image Showcase (Continuous CSS Marquee) -->
+                <div class="premium-image-showcase reveal d2">
+                    <div class="showcase-track">
+                        <!-- SET 1 -->
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.13.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.12.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.09.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.07.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.05.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.03.48.jpeg" alt="Memory" loading="lazy" /></div>
+                        <!-- SET 2 -->
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.13.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.12.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.09.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.07.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.04.05.jpeg" alt="Memory" loading="lazy" /></div>
+                        <div class="showcase-slide"><img src="images/WhatsApp Image 2026-03-11 at 18.03.48.jpeg" alt="Memory" loading="lazy" /></div>
+                    </div>
+                </div>
+
+                <style>
+                    .premium-image-showcase {
+                        position: relative;
+                        width: 100vw;
+                        margin-left: calc(-50vw + 50%);
+                        padding: 0 0 60px;
+                        overflow: hidden;
+                    }
+                    .showcase-track {
+                        display: flex;
+                        gap: 24px;
+                        padding: 0 40px;
+                        width: max-content;
+                        /* Infinite slide to exactly 50% width plus half gap */
+                        animation: autoScrollTrack 30s linear infinite;
+                    }
+                    .showcase-track:hover {
+                        animation-play-state: paused;
+                    }
+                    .showcase-slide {
+                        flex: 0 0 240px;
+                        height: 320px;
+                        border-radius: 16px;
+                        overflow: hidden;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                        transition: transform 0.4s ease, box-shadow 0.4s ease;
+                        will-change: transform;
+                    }
+                    .showcase-slide:hover {
+                        transform: translateY(-8px) scale(1.02);
+                        box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 20px 40px rgba(255,255,255,0.1);
+                    }
+                    .showcase-slide img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                    @keyframes autoScrollTrack {
+                        0% { transform: translateX(0); }
+                        100% { transform: translateX(calc(-50% - 12px)); }
+                    }
+                    @media (max-width: 768px) {
+                        .showcase-slide { flex: 0 0 200px; height: 280px; }
+                        .showcase-track { animation-duration: 25s; }
+                    }
+                </style>
+            </section>
+
+            <!-- ─── VENUE / MAP (Client Spec Port) ─── -->
+            <section class="section dark venue-section" id="venue">
+                <div class="venue-grid">
+                    
+                    <!-- Left Column: Details -->
+                    <div class="venue-details reveal">
+                        <p class="section-tag venue-eyebrow" style="font-size:14px;">The Venue</p>
+                        <h2 class="venue-heading" style="font-size:48px;">FIND US AT<br><span class="venue-heading-gold">THE VENUE</span></h2>
+                        <div class="section-rule venue-rule" style="margin-bottom:30px;"><span></span><i></i><span></span></div>
+
+                        <div class="venue-entry" style="margin-top: 20px;">
+                            <svg class="venue-pin-icon" viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
+                            </svg>
+                            <div class="venue-entry-text">
+                                <span class="venue-entry-label" style="font-size: 14px; margin-bottom:6px;">GETTING THERE</span>
+                                <span class="venue-entry-title" style="font-size: 28px; line-height:1.2; margin-bottom:4px;">Valet Parking Only</span>
+                                <span class="venue-entry-address" style="font-size: 18px; line-height:1.4; opacity:0.8;">Nearest landmark: ECR Toll Plaza</span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Right Column: Map Embed -->
+                    <div class="venue-map-wrapper reveal d2">
+                        <div class="map-header-bar">
+                            <div style="display:flex; gap:4px;">
+                                <div style="width:6px; height:6px; background:rgba(200,168,98,0.2); border-radius:50%;"></div>
+                                <div style="width:6px; height:6px; background:rgba(200,168,98,0.2); border-radius:50%;"></div>
+                                <div style="width:6px; height:6px; background:rgba(200,168,98,0.2); border-radius:50%;"></div>
+                            </div>
+                            <span style="font-family:'Montserrat', sans-serif; font-size:7px; letter-spacing:0.3em; color:rgba(200,168,98,0.5); flex-grow:1; text-align:center;">VENUE LOCATION</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                            </svg>
+                        </div>
+                        <div class="map-embed">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.9768636938084!2d80.2429939!3d12.844770800000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525b9915513f91%3A0xbfe9dfb0625d28eb!2sVilla%20del%20Sol!5e0!3m2!1sen!2sin!4v1773225200279!5m2!1sen!2sin"
+                                width="100%" 
+                                height="100%" 
+                                style="border:0; display:block; min-height:398px; filter: saturate(0.85) brightness(0.92) hue-rotate(10deg);"
+                                allowfullscreen="" 
+                                loading="lazy">
+                            </iframe>
+                        </div>
+                        <div class="map-footer-bar">
+                            <span style="font-family:'Montserrat', sans-serif; font-size:7px; color:rgba(200,168,98,0.45);">📍 Live Location</span>
+                            <a href="#" style="font-family:'Montserrat', sans-serif; font-size:7px; letter-spacing:0.2em; color:var(--gold); text-decoration:none; opacity:0.6; transition:opacity 0.2s ease;">Open in Google Maps &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <!-- ─── SCRATCH-OFF COINS ─── -->
+            <section class="scratch-section">
+                <div class="reveal">
+                    <p class="section-tag">Interactive Reveal</p>
+                    <h2 class="section-heading" style="color:rgba(255,255,255,0.88)">Scratch to Reveal</h2>
+                    <div class="section-rule" style="max-width:120px">
+                        <span style="background:linear-gradient(to right,transparent,var(--gold))"></span>
+                        <i style="background:var(--gold)"></i>
+                        <span style="background:linear-gradient(to left,transparent,var(--gold))"></span>
+                    </div>
+                </div>
+                <div class="reveal d1">
+                    <p class="scratch-hint">Use your finger to scratch the gold seals</p>
+                </div>
+
+                <div class="coins-row reveal d2">
+                    <div class="coin-wrap">
+                        <span class="coin-label-tag" style="font-size:12px;">Day</span>
+                        <div class="coin-container" id="wrap-day">
+                            <div class="coin-back">
+                                <span class="val" style="font-size:22px">Sunday</span>
+                            </div>
+                            <canvas class="coin-canvas" id="coin-day" width="96" height="96"></canvas>
+                            <div class="coin-burst" id="burst-day"></div>
+                        </div>
+                    </div>
+
+                    <div class="coin-wrap">
+                        <span class="coin-label-tag" style="font-size:12px;">Date</span>
+                        <div class="coin-container" id="wrap-date">
+                            <div class="coin-back">
+                                <span class="val" style="font-size:26px">15th</span>
+                                <span class="unit" style="font-size:14px">of March</span>
+                            </div>
+                            <canvas class="coin-canvas" id="coin-date" width="96" height="96"></canvas>
+                            <div class="coin-burst" id="burst-date"></div>
+                        </div>
+                    </div>
+
+                    <div class="coin-wrap">
+                        <span class="coin-label-tag" style="font-size:12px;">Year</span>
+                        <div class="coin-container" id="wrap-time">
+                            <div class="coin-back">
+                                <span class="val" style="font-size:28px">2026</span>
+                            </div>
+                            <canvas class="coin-canvas" id="coin-time" width="96" height="96"></canvas>
+                            <div class="coin-burst" id="burst-time"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── COUNTDOWN ─── -->
+            <section class="section">
+                <div class="reveal">
+                    <p class="section-tag">Time Remaining</p>
+                    <h2 class="section-heading">The Clock<br />is Ticking</h2>
+                    <div class="section-rule"><span></span><i></i><span></span></div>
+                </div>
+                <div class="countdown-wrap reveal d1">
+                    <div class="cd-box"><span class="cd-num" id="cd-d">--</span><span class="cd-label">Days</span></div>
+                    <div class="cd-box"><span class="cd-num" id="cd-h">--</span><span class="cd-label">Hours</span>
+                    </div>
+                    <div class="cd-box"><span class="cd-num" id="cd-m">--</span><span class="cd-label">Mins</span></div>
+                    <div class="cd-box"><span class="cd-num" id="cd-s">--</span><span class="cd-label">Secs</span></div>
+                </div>
+            </section>
+
+            <!-- ─── THE EVENING UNFOLDS ─── -->
+            <section class="section" id="schedule">
+                <div class="reveal">
+                    <p class="section-tag" style="margin-bottom:8px">What Awaits</p>
+                    <h2 class="section-heading" style="font-size: 42px;">The Sundowner<br/>Soirée</h2>
+                </div>
+                
+                <div class="evening-grid reveal d1" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <!-- CARD 1 -->
+                    <div class="evening-card-wrap tilt-card" style="height:340px;">
+                        <div class="evening-card-inner">
+                            <div class="evening-front" style="padding:0; overflow:hidden; border:1px solid rgba(200,168,98,0.2);">
+                                <img src="images/evening_phase_1_meet_1773241464813.png" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1);" />
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding-bottom:30px; flex-direction:column; background:linear-gradient(to top, rgba(10,20,15,0.95), transparent);">
+                                    <div class="hint" style="font-size:11px; color:var(--gold); letter-spacing:0.3em; background:rgba(0,0,0,0.6); padding:8px 20px; border-radius:30px; border:1px solid rgba(200,168,98,0.3); backdrop-filter:blur(10px);">PHASE 01</div>
+                                </div>
+                            </div>
+                            <div class="evening-back" style="background:#0a100d; border:1px solid rgba(200,168,98,0.4);">
+                                <div class="emoji" style="font-size:48px; margin-bottom:16px;">🥂</div>
+                                <div style="font-family:'Bodoni Moda',serif; font-size:32px; color:#fff; line-height:1.2;">Meet & Greet</div>
+                                <p class="poetic-line" style="font-size:16px; margin-top:16px; color:rgba(255,255,255,0.75);">"Welcome drinks and warm embraces as we begin the night."</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CARD 2 -->
+                    <div class="evening-card-wrap tilt-card" style="height:340px;">
+                        <div class="evening-card-inner">
+                            <div class="evening-front" style="padding:0; overflow:hidden; border:1px solid rgba(200,168,98,0.2);">
+                                <img src="images/evening_phase_2_melody_1773241482328.png" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1);" />
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding-bottom:30px; flex-direction:column; background:linear-gradient(to top, rgba(10,20,15,0.95), transparent);">
+                                    <div class="hint" style="font-size:11px; color:var(--gold); letter-spacing:0.3em; background:rgba(0,0,0,0.6); padding:8px 20px; border-radius:30px; border:1px solid rgba(200,168,98,0.3); backdrop-filter:blur(10px);">PHASE 02</div>
+                                </div>
+                            </div>
+                            <div class="evening-back" style="background:#0a100d; border:1px solid rgba(200,168,98,0.4);">
+                                <div class="emoji" style="font-size:48px; margin-bottom:16px;">🎼</div>
+                                <div style="font-family:'Bodoni Moda',serif; font-size:32px; color:#fff; line-height:1.2;">Melody Match</div>
+                                <p class="poetic-line" style="font-size:16px; margin-top:16px; color:rgba(255,255,255,0.75);">"Can you guess the tune? A test of your musical memories."</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CARD 3 -->
+                    <div class="evening-card-wrap tilt-card" style="height:340px;">
+                        <div class="evening-card-inner">
+                            <div class="evening-front" style="padding:0; overflow:hidden; border:1px solid rgba(200,168,98,0.2);">
+                                <img src="images/evening_phase_3_prizes_1773241500193.png" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1);" />
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding-bottom:30px; flex-direction:column; background:linear-gradient(to top, rgba(10,20,15,0.95), transparent);">
+                                    <div class="hint" style="font-size:11px; color:var(--gold); letter-spacing:0.3em; background:rgba(0,0,0,0.6); padding:8px 20px; border-radius:30px; border:1px solid rgba(200,168,98,0.3); backdrop-filter:blur(10px);">PHASE 03</div>
+                                </div>
+                            </div>
+                            <div class="evening-back" style="background:#0a100d; border:1px solid rgba(200,168,98,0.4);">
+                                <div class="emoji" style="font-size:48px; margin-bottom:16px;">🎁</div>
+                                <div style="font-family:'Bodoni Moda',serif; font-size:32px; color:#fff; line-height:1.2;">Prizes worth<br>₹1,50,000</div>
+                                <p class="poetic-line" style="font-size:16px; margin-top:16px; color:rgba(255,255,255,0.75);">"Only the lucky ones win big tonight."</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CARD 4 -->
+                    <div class="evening-card-wrap tilt-card" style="height:340px;">
+                        <div class="evening-card-inner">
+                            <div class="evening-front" style="padding:0; overflow:hidden; border:1px solid rgba(200,168,98,0.2);">
+                                <img src="images/evening_phase_4_party_1773241517484.png" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1);" />
+                                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-end; padding-bottom:30px; flex-direction:column; background:linear-gradient(to top, rgba(10,20,15,0.95), transparent);">
+                                    <div class="hint" style="font-size:11px; color:var(--gold); letter-spacing:0.3em; background:rgba(0,0,0,0.6); padding:8px 20px; border-radius:30px; border:1px solid rgba(200,168,98,0.3); backdrop-filter:blur(10px);">PHASE 04</div>
+                                </div>
+                            </div>
+                            <div class="evening-back" style="background:#0a100d; border:1px solid rgba(200,168,98,0.4);">
+                                <div class="emoji" style="font-size:48px; margin-bottom:16px;">🌙</div>
+                                <div style="font-family:'Bodoni Moda',serif; font-size:32px; color:#fff; line-height:1.2;">After Party</div>
+                                <p class="poetic-line" style="font-size:16px; margin-top:16px; color:rgba(255,255,255,0.75);">"When the formal ends, the real fun begins."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── HAWAII CALLING (DRESS CODE) ─── -->
+            <section class="section hawaii-section" id="hawaii" style="padding-bottom: 80px;">
+                <div class="hawaii-bg-noise"></div>
+                <!-- Abstract Hibiscus SVGs -->
+                <svg class="hibiscus-deco topLeft" viewBox="0 0 100 100">
+                    <path d="M50,10 C60,30 80,20 85,40 C90,60 70,70 60,90 C40,70 20,80 15,60 C10,40 30,30 50,10 Z"/>
+                </svg>
+                <svg class="hibiscus-deco bottomRight" viewBox="0 0 100 100">
+                    <path d="M50,10 C60,30 80,20 85,40 C90,60 70,70 60,90 C40,70 20,80 15,60 C10,40 30,30 50,10 Z"/>
+                </svg>
+                
+                <div class="reveal" style="position:relative; z-index:2; text-align:center; margin-bottom:60px;">
+                    <p class="section-tag" style="color:rgba(100,220,200,0.8); border-color:rgba(100,220,200,0.3); margin: 0 auto 12px; font-size: 14px;">Attire / Lookbook</p>
+                    <h2 class="section-heading" style="color:#fff; font-size: 56px;">Hawaii<br/>Calling</h2>
+                </div>
+
+                <!-- Splitting Dress Code Left/Right via Grid -->
+                <div class="reveal d1" style="max-width: 1000px; margin: 0 auto; position:relative; z-index:10; display:grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 0 20px;">
+                    
+                    <!-- LEFT SIDE: FEMALES -->
+                    <div style="background:rgba(10,20,15,0.4); border-radius:32px; padding: 40px 32px; border: 1px solid rgba(100,220,200,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+                        <h3 style="font-family:'Montserrat',sans-serif; font-size:16px; letter-spacing:0.4em; text-transform:uppercase; color:#EDD48A; margin-bottom: 32px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">Ladies</h3>
+                        
+                        <div style="display:flex; flex-direction:column; gap: 24px;">
+                            <div class="showcase-item" data-img="2" style="display:flex; justify-content:space-between; align-items:flex-start; cursor:pointer;" onmouseover="setPreview(2)" onmouseout="clearPreview()">
+                                <div>
+                                    <h4 style="font-family:'Bodoni Moda',serif; font-size:28px; color:#fff; transition:0.3s;" class="sci-title">Flowy Dresses</h4>
+                                    <p style="font-family:'Montserrat',sans-serif; font-size:14px; color:rgba(255,255,255,0.6); margin-top:8px;">Light fabrics & beach-ready silhouettes</p>
+                                </div>
+                            </div>
+                            
+                            <div class="showcase-item" data-img="4" style="display:flex; justify-content:space-between; align-items:flex-start; cursor:pointer;" onmouseover="setPreview(4)" onmouseout="clearPreview()">
+                                <div>
+                                    <h4 style="font-family:'Bodoni Moda',serif; font-size:28px; color:#fff; transition:0.3s;" class="sci-title">Floral T-Shirts</h4>
+                                    <p style="font-family:'Montserrat',sans-serif; font-size:14px; color:rgba(255,255,255,0.6); margin-top:8px;">Vibrant patterns with comfortable fits</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDE: MALES -->
+                    <div style="background:rgba(10,20,15,0.4); border-radius:32px; padding: 40px 32px; border: 1px solid rgba(100,220,200,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+                        <h3 style="font-family:'Montserrat',sans-serif; font-size:16px; letter-spacing:0.4em; text-transform:uppercase; color:#EDD48A; margin-bottom: 32px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">Gentlemen</h3>
+                        
+                        <div style="display:flex; flex-direction:column; gap: 24px;">
+                            <div class="showcase-item" data-img="1" style="display:flex; justify-content:space-between; align-items:flex-start; cursor:pointer;" onmouseover="setPreview(1)" onmouseout="clearPreview()">
+                                <div>
+                                    <h4 style="font-family:'Bodoni Moda',serif; font-size:28px; color:#fff; transition:0.3s;" class="sci-title">Beachy Shirts</h4>
+                                    <p style="font-family:'Montserrat',sans-serif; font-size:14px; color:rgba(255,255,255,0.6); margin-top:8px;">Bright button-downs with tropical prints</p>
+                                </div>
+                            </div>
+                            
+                            <div class="showcase-item" data-img="3" style="display:flex; justify-content:space-between; align-items:flex-start; cursor:pointer;" onmouseover="setPreview(3)" onmouseout="clearPreview()">
+                                <div>
+                                    <h4 style="font-family:'Bodoni Moda',serif; font-size:28px; color:#fff; transition:0.3s;" class="sci-title">Linen & Shorts</h4>
+                                    <p style="font-family:'Montserrat',sans-serif; font-size:14px; color:rgba(255,255,255,0.6); margin-top:8px;">Relaxed fits in earth tones or pastels</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Image Preview -->
+                <div id="showcase-floater" style="position:fixed; top:0; left:0; width:340px; height:420px; border-radius:24px; overflow:hidden; pointer-events:none; opacity:0; transform:scale(0.8); transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index:9000; box-shadow:0 24px 60px rgba(0,0,0,0.5); border: 1px solid rgba(200,168,98,0.2);">
+                    <img id="sc-img-1" src="assets/hawaii_shirt.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
+                    <img id="sc-img-2" src="assets/hawaii_dress.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
+                    <img id="sc-img-3" src="assets/hawaii_linen.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
+                    <img id="sc-img-4" src="https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&q=80&w=800" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
+                    
+                    <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.4), transparent); pointer-events:none;"></div>
+                </div>
+
+                <style>
+                    .showcase-item:hover .sci-title {
+                        color: #EDD48A !important;
+                        transform: translateX(8px);
+                    }
+                    @media (max-width: 900px) {
+                        .hawaii-section .reveal.d1 { grid-template-columns: 1fr !important; }
+                    }
+                    @media (max-width: 768px) {
+                        #showcase-floater { display: none !important; }
+                    }
+                </style>
+
+            </section>
+
+
+
+            <!-- ─── HOSTS ─── -->
+            <section class="section warm">
+                <div class="reveal">
+                    <p class="section-tag" style="border-color:rgba(200,168,98,0.2); color: rgba(200,168,98,0.8); font-size:14px;">The Dream Team</p>
+                    <h2 class="section-heading" style="font-size: 56px;">Your Hosts</h2>
+                    <div class="section-rule" style="margin-top: 24px; margin-bottom: 48px;"><span></span><i></i><span></span></div>
+                </div>
+                
+                <!-- Horizontal layout forced flex inline -->
+                <div class="reveal d1" style="display: flex; flex-direction: row; justify-content: center; gap: 40px; width: 100%; max-width: 1000px; margin: 0 auto;">
+                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
+                        <div style="width:140px; height:140px; border-radius:50%; background:var(--green); border:2px solid var(--gold); overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.3); margin:0 auto;">
+                            <img src="images/Untitled%20design%20(10).png" style="width:100%; height:100%; object-fit:cover;" />
+                        </div>
+                        <div>
+                            <span class="host-name" style="font-size: 28px; display:block;">Rohit Ankita Doshi</span>
+                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">President</span>
+                        </div>
+                    </div>
+                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
+                        <div style="width:140px; height:140px; border-radius:50%; background:var(--green); border:2px solid var(--gold); overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.3); margin:0 auto;">
+                            <img src="images/Untitled%20design%20(7).png" style="width:100%; height:100%; object-fit:cover;" />
+                        </div>
+                        <div>
+                            <span class="host-name" style="font-size: 28px; display:block;">Asha Tarun Chajjed</span>
+                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">Secretary</span>
+                        </div>
+                    </div>
+                    <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
+                        <div style="width:140px; height:140px; border-radius:50%; background:var(--green); border:2px solid var(--gold); overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.3); margin:0 auto;">
+                            <img src="images/Untitled%20design%20(9).png" style="width:100%; height:100%; object-fit:cover;" />
+                        </div>
+                        <div>
+                            <span class="host-name" style="font-size: 28px; display:block;">Ravi Manisha Hirani</span>
+                            <span class="host-role" style="font-size: 16px; margin-top:8px; display:block; color:var(--gold);">Entertainment Director</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ─── THE SOUNDTRACK ─── -->
+            <section class="section dark">
+                <div class="reveal">
+                    <p class="section-tag">THE MUSIC</p>
+                    <h2 class="section-heading">The Soundtrack of the Night</h2>
+                    
+                    <div style="display:flex; justify-content:center; gap:2px; height:28px; margin: 18px auto 36px; align-items:flex-end;">
+                        <div style="width:3px; background:var(--gold); animation: eqBar 1s infinite alternate; animation-delay: 0s;"></div>
+                        <div style="width:3px; background:var(--gold); animation: eqBar 1.2s infinite alternate; animation-delay: 0.1s;"></div>
+                        <div style="width:3px; background:var(--gold); animation: eqBar 0.9s infinite alternate; animation-delay: 0.2s;"></div>
+                        <div style="width:3px; background:var(--gold); animation: eqBar 1.1s infinite alternate; animation-delay: 0.3s;"></div>
+                        <div style="width:3px; background:var(--gold); animation: eqBar 1.3s infinite alternate; animation-delay: 0.4s;"></div>
+                    </div>
+                </div>
+
+                <div class="reveal d1" style="display:flex; flex-direction:column; gap:12px; max-width:480px; margin:0 auto;">
+                    <div class="music-card" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
+                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">01</div>
+                        <div>
+                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Bollywood Classics</div>
+                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">For the ones who know every word</div>
+                        </div>
+                    </div>
+                    
+                    <div class="music-card" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
+                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">02</div>
+                        <div>
+                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Sunset Beats</div>
+                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">As the golden hour arrives</div>
+                        </div>
+                    </div>
+
+                    <div class="music-card reveal d2" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
+                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">03</div>
+                        <div>
+                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Dance Floor</div>
+                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">When the night takes over</div>
+                        </div>
+                    </div>
+
+                    <div class="music-card reveal d3" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
+                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">04</div>
+                        <div>
+                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Antakshari Rounds</div>
+                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">The game that never gets old</div>
+                        </div>
+                    </div>
+
+                    <div class="music-card reveal d3" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
+                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">05</div>
+                        <div>
+                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Late Night Mix</div>
+                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">The last song you'll remember</div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    @keyframes eqBar {
+                        0% { height: 8px; }
+                        100% { height: 28px; }
+                    }
+                </style>
+            </section>
+
+
+
+
+
+            <!-- ─── TICKET RSVP ─── -->
+            <section class="section rsvp-section" id="rsvp" style="padding-top: 20px;">
+                <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+                    <p class="section-tag" style="margin: 0 auto 12px; font-size:14px; border-color:rgba(200,168,98,0.3);">Save Your Spot</p>
+                    <h2 class="section-heading" style="font-size:52px; color:#ffffff;">Confirm Your<br/>Presence</h2>
+                </div>
+                
+                <div class="ticket-wrap reveal d1 tilt-card" style="box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    <!-- Balanced contrast ticket background -->
+                    <div class="ticket-left" style="background:var(--gold); border-right: 2px dashed #9E854B; padding:40px 20px; color:#1A231E;">
+                        <span class="ticket-vertical-text" style="color:#1A231E; font-family:'Montserrat', sans-serif; letter-spacing:8px; font-weight:600; font-size:16px;">V.I.P</span>
+                        <div class="ticket-barcode" style="color:#1A231E; opacity:0.8;">|||| |||| || | |||</div>
+                    </div>
+                    <div class="ticket-right" style="background:#1B2421; border: 1px solid rgba(200,168,98,0.3); border-left:none;">
+                        <p class="ticket-eyebrow" style="color:var(--gold);">Boarding Pass</p>
+                        <h3 class="ticket-title gold-shimmer-text">Jhankaar Beats</h3>
+                        <div class="ticket-details">
+                            <div>
+                                <span style="color:rgba(255,255,255,0.6);">DATE</span>
+                                <strong style="color:#fff;">15 MAR '26</strong>
+                            </div>
+                            <div>
+                                <span style="color:rgba(255,255,255,0.6);">TIME</span>
+                                <strong style="color:#fff;">4:00 PM</strong>
+                            </div>
+                        </div>
+                        <a href="https://tinyurl.com/2z9b7hvj" target="_blank" class="ticket-btn magnetic-btn">Confirm RSVP</a>
+                    </div>
+                </div>
+                
+            </section>
+
+        </div><!-- /invitation -->
+    </div><!-- /phone -->
+
+    <!-- Sticky bar -->
+    <div id="sticky-bar" class="off">
+        <div class="sticky-info">
+            <span>Team Magic</span>
+            <strong>Jhankaar Events</strong>
+        </div>
+        <a href="https://tinyurl.com/2z9b7hvj" target="_blank" class="sticky-cta">RSVP Now</a>
+    </div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // INITIAL SETUP (Preloader Bypassed)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        document.addEventListener('DOMContentLoaded', () => {
+            const gate = document.getElementById('gate');
+            if (gate) {
+                gate.style.opacity = '1';
+                gate.style.transition = 'opacity 0.6s ease';
+            }
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // CURTAIN GATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const gateCenter = document.getElementById('gate-center');
+        const invitation = document.getElementById('invitation');
+        const musicBtn = document.getElementById('music-btn');
+        const particles = document.getElementById('particles');
+
+        let gateOpened = false;
+
+        function playWhoosh() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.5);
+                
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1);
+            } catch(e) {}
+        }
+
+        function openGate() {
+            if (gateOpened) return;
+            gateOpened = true;
+
+            document.getElementById('gate').classList.add('open');
+            document.body.classList.add('cine-bars-out'); // Animate letterbox away
+            invitation.classList.add('visible');
+            musicBtn.classList.add('visible');
+
+            playWhoosh();
+
+            // Start particle system
+            particles.classList.add('show');
+            initParticles();
+
+            // Try to start audio
+            startAudio();
+
+            setTimeout(() => { document.getElementById('gate').classList.add('gone'); }, 1800);
+        }
+
+        gate.addEventListener('click', openGate);
+        gate.addEventListener('touchend', e => { e.preventDefault(); openGate(); }, { passive: false });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // AMBIENT PARTICLE SYSTEM
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function initParticles() {
+            const canvas = particles;
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const MAX = 28;
+            const pts = [];
+
+            for (let i = 0; i < MAX; i++) pts.push(spawnParticle());
+
+            function spawnParticle() {
+                return {
+                    x: Math.random() * window.innerWidth,
+                    y: window.innerHeight + 10,
+                    size: Math.random() * 1.8 + 0.4,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: -(Math.random() * 0.5 + 0.2),
+                    life: 1,
+                    fade: Math.random() * 0.004 + 0.002,
+                    hue: Math.random() * 20 + 35, // gold hues
+                };
+            }
+
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = pts.length - 1; i >= 0; i--) {
+                    const p = pts[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= p.fade;
+
+                    if (p.life <= 0 || p.y < -20) {
+                        pts[i] = spawnParticle();
+                        continue;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${p.hue}, 75%, 70%, ${p.life * 0.45})`;
+                    ctx.fill();
+                }
+
+                // Keep spawning to maintain count
+                while (pts.length < MAX) pts.push(spawnParticle());
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // MUSIC / AUDIO
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const audioEl = document.getElementById('bg-audio');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        let audioCtx = null;
+        let isPlaying = false;
+        let usingWebAudio = false;
+        let oscillators = [];
+
+        function startAudio() {
+            // Force-load the MP3 directly (works even with <source> child elements)
+            const mp3path = 'Senorita%20Zindagi%20Na%20Milegi%20Dobara%20320%20Kbps.mp3';
+            audioEl.volume = 0.20;
+            if (!audioEl.src || audioEl.src === window.location.href) {
+                audioEl.src = mp3path;
+                audioEl.load();
+            }
+            audioEl.play().then(() => {
+                isPlaying = true;
+                usingWebAudio = false;
+                updateMusicBtn();
+            }).catch(() => { startWebAudio(); });
+        }
+
+        // Gentle ambient generative music via Web Audio API
+        function startWebAudio() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                usingWebAudio = true;
+                playAmbient();
+                isPlaying = true;
+                updateMusicBtn();
+            } catch (e) { /* audio not available */ }
+        }
+
+        function playAmbient() {
+            if (!audioCtx) return;
+            stopWebAudio();
+
+            const master = audioCtx.createGain();
+            master.gain.value = 0;
+            master.connect(audioCtx.destination);
+            master.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 3);
+
+            // Drone: Sa (C2 ~65Hz) + Pa (G2 ~98Hz)
+            const drones = [65.4, 98.0, 130.8, 196.0];
+            drones.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                const pan = audioCtx.createStereoPanner();
+                osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+                osc.frequency.value = freq;
+                g.gain.value = i < 2 ? 0.35 : 0.12;
+                pan.pan.value = (i % 2 === 0 ? -0.2 : 0.2);
+                osc.connect(g); g.connect(pan); pan.connect(master);
+                osc.start();
+                oscillators.push(osc);
+            });
+
+            // Melodic pad: pentatonic shimmer
+            const pentatonic = [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3];
+            let noteIdx = 0;
+
+            function playNote() {
+                if (!audioCtx || !isPlaying) return;
+                const freq = pentatonic[noteIdx % pentatonic.length];
+                noteIdx = (noteIdx + 1) % pentatonic.length;
+
+                const osc = audioCtx.createOscillator();
+                const env = audioCtx.createGain();
+                const filt = audioCtx.createBiquadFilter();
+                filt.type = 'lowpass';
+                filt.frequency.value = 1800;
+
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                env.gain.setValueAtTime(0, audioCtx.currentTime);
+                env.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.4);
+                env.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 3.5);
+
+                osc.connect(filt); filt.connect(env); env.connect(master);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 4);
+
+                const delay = 1200 + Math.random() * 2000;
+                setTimeout(playNote, delay);
+            }
+            setTimeout(playNote, 800);
+        }
+
+        function stopWebAudio() {
+            oscillators.forEach(o => { try { o.stop(); } catch (e) { } });
+            oscillators = [];
+        }
+
+        function updateMusicBtn() {
+            if (isPlaying) {
+                iconPlay.style.display = 'none';
+                iconPause.style.display = 'block';
+                musicBtn.classList.add('playing');
+            } else {
+                iconPlay.style.display = 'block';
+                iconPause.style.display = 'none';
+                musicBtn.classList.remove('playing');
+            }
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if (!audioCtx && !audioEl.src) { startAudio(); return; }
+
+            if (usingWebAudio) {
+                if (isPlaying) {
+                    stopWebAudio();
+                    if (audioCtx) { audioCtx.suspend(); }
+                    isPlaying = false;
+                } else {
+                    if (audioCtx) {
+                        audioCtx.resume();
+                        playAmbient();
+                    }
+                    isPlaying = true;
+                }
+            } else {
+                if (isPlaying) {
+                    audioEl.pause();
+                    isPlaying = false;
+                } else {
+                    audioEl.play();
+                    isPlaying = true;
+                }
+            }
+            updateMusicBtn();
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // SCROLL REVEAL
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('in');
+                    revealObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        revealEls.forEach(el => revealObs.observe(el));
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // STICKY BAR
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const stickyBar = document.getElementById('sticky-bar');
+        window.addEventListener('scroll', () => {
+            stickyBar.classList.toggle('off', window.scrollY < 400);
+        }, { passive: true });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // COUNTDOWN
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const eventDate = new Date('2026-03-15T16:00:00');
+
+        function tick() {
+            const diff = eventDate - new Date();
+            if (diff <= 0) {
+                ['cd-d', 'cd-h', 'cd-m', 'cd-s'].forEach(id => document.getElementById(id).textContent = '00');
+                return;
+            }
+            const d = Math.floor(diff / 86400000);
+            const h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+
+            document.getElementById('cd-d').textContent = String(d).padStart(2, '0');
+            document.getElementById('cd-h').textContent = String(h).padStart(2, '0');
+            document.getElementById('cd-m').textContent = String(m).padStart(2, '0');
+            document.getElementById('cd-s').textContent = String(s).padStart(2, '0');
+        }
+        tick();
+        setInterval(tick, 1000);
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // SCRATCH-OFF COINS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        let scratchedCount = 0;
+
+        function setupCoin(canvasId, burstId, onDone) {
+            const canvas = document.getElementById(canvasId);
+            const burst = document.getElementById(burstId);
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const cx = W / 2, cy = H / 2, r = W / 2;
+
+            // Draw gold seal
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.clip();
+
+            // Radial gold gradient
+            const grd = ctx.createRadialGradient(cx - 12, cy - 12, 4, cx, cy, r);
+            grd.addColorStop(0, '#F2DC90');
+            grd.addColorStop(0.3, '#DDB850');
+            grd.addColorStop(0.7, '#A87C20');
+            grd.addColorStop(1, '#C8A040');
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, W, H);
+
+            // Shine sweeps
+            ctx.globalAlpha = 0.12;
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos((i * 60) * Math.PI / 180) * 8,
+                    cy + Math.sin((i * 60) * Math.PI / 180) * 8);
+                ctx.lineTo(cx + Math.cos((i * 60) * Math.PI / 180) * r,
+                    cy + Math.sin((i * 60) * Math.PI / 180) * r);
+                ctx.strokeStyle = '#FFF';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+            }
+
+            // Embossed ring
+            ctx.globalAlpha = 0.25;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 8, 0, Math.PI * 2);
+            ctx.strokeStyle = '#FFF';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Wax seal text
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(80, 50, 0, 0.55)';
+            ctx.font = `bold 8px 'Montserrat', sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('SCRATCH', cx, cy - 5);
+            ctx.fillText('TO REVEAL', cx, cy + 7);
+            ctx.restore();
+
+            let painting = false;
+            let done = false;
+
+            function getXY(e) {
+                const rect = canvas.getBoundingClientRect();
+                const sx = canvas.width / rect.width;
+                const sy = canvas.height / rect.height;
+                const src = e.touches ? e.touches[0] : e;
+                return { x: (src.clientX - rect.left) * sx, y: (src.clientY - rect.top) * sy };
+            }
+
+            function scratch(e) {
+                if (!painting || done) return;
+                e.preventDefault();
+                const { x, y } = getXY(e);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+                checkDone();
+            }
+
+            function checkDone() {
+                const data = ctx.getImageData(0, 0, W, H).data;
+                let clear = 0;
+                for (let i = 3; i < data.length; i += 4) if (data[i] < 128) clear++;
+                if (clear / (data.length / 4) > 0.62) {
+                    done = true;
+                    ctx.clearRect(0, 0, W, H);
+
+                    // Burst ring animation
+                    burst.classList.add('go');
+
+                    confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        origin: { y: 0.55 },
+                        colors: ['#EDD48A', '#C8A862', '#A07030', '#FFF', '#3A5240']
+                    });
+
+                    if (onDone) onDone();
+                }
+            }
+
+            canvas.addEventListener('mousedown', e => { painting = true; scratch(e); });
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('mouseup', () => { painting = false; });
+            canvas.addEventListener('mouseleave', () => { painting = false; });
+            canvas.addEventListener('touchstart', e => { painting = true; scratch(e); }, { passive: false });
+            canvas.addEventListener('touchmove', scratch, { passive: false });
+            canvas.addEventListener('touchend', () => { painting = false; });
+        }
+
+        function onCoinScratched() {
+            scratchedCount++;
+            if (scratchedCount === 3) {
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 220,
+                        spread: 130,
+                        startVelocity: 40,
+                        origin: { y: 0.5 },
+                        colors: ['#EDD48A', '#C8A862', '#3A5240', '#E8847A', '#FFF', '#F2DC90']
+                    });
+                }, 500);
+            }
+        }
+
+        setupCoin('coin-day', 'burst-day', onCoinScratched);
+        setupCoin('coin-date', 'burst-date', onCoinScratched);
+        setupCoin('coin-time', 'burst-time', onCoinScratched);
+    </script>
+    <script>
+        // Setup Auto-Rotating gallery for the memory showcase
+        document.addEventListener('DOMContentLoaded', () => {
+            const showcase = document.querySelector('.premium-image-showcase');
+            if (showcase) {
+                let isHovering = false;
+                showcase.addEventListener('mouseenter', () => isHovering = true);
+                showcase.addEventListener('mouseleave', () => isHovering = false);
+                showcase.addEventListener('touchstart', () => isHovering = true);
+                showcase.addEventListener('touchend', () => isHovering = false);
+                
+                function autoScrollShowcase() {
+                    if (!isHovering) {
+                        showcase.scrollLeft += 1;
+                        // Reset if reached end
+                        if (showcase.scrollLeft >= (showcase.scrollWidth - showcase.clientWidth - 1)) {
+                            showcase.scrollLeft = 0;
+                        }
+                    }
+                    requestAnimationFrame(autoScrollShowcase);
+                }
+                requestAnimationFrame(autoScrollShowcase);
+            }
+        });
+    </script>
+    
+    <!-- Premium Logic -->
+    <script src="js/premium.js"></script>
+</body>
+
+</html>
