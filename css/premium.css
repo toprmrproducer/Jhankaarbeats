@@ -561,7 +561,8 @@ body::after {
     border-radius: 20px;
 }
 
-.evening-card-wrap:hover .evening-card-inner {
+.evening-card-wrap:hover .evening-card-inner,
+.evening-card-wrap.flipped .evening-card-inner {
     transform: rotateY(180deg);
 }
 
@@ -586,6 +587,31 @@ body::after {
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     border: 1px solid rgba(200,168,98,0.15);
     box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Tap to Reveal badge - sits in top-right corner of each phase card */
+.tap-reveal-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: rgba(200, 168, 98, 0.9);
+    background: rgba(0, 0, 0, 0.55);
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(200, 168, 98, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: tapPulse 2.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+@keyframes tapPulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.05); }
 }
 
 .evening-front .emoji {
