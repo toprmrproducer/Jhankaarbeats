@@ -327,6 +327,20 @@
             transform: scale(1);
         }
 
+        /* Mobile alignment with header */
+        @media (max-width: 768px) {
+            #music-btn {
+                top: 36px;
+                right: 20px;
+                width: 36px;
+                height: 36px;
+                transform: scale(0.8) translateY(-150%);
+            }
+            #music-btn.visible {
+                transform: scale(1) translateY(0);
+            }
+        }
+
         #music-btn:hover {
             border-color: rgba(200, 168, 98, 0.7);
         }
