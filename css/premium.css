@@ -999,31 +999,31 @@ body::after {
 .showcase-track {
     display: inline-flex;
     gap: 24px;
-    padding: 20px 50vw 40px 24px;
+    padding: 20px 24px 40px;
 }
 
 @media (min-width: 768px) {
     .showcase-track {
-        padding-left: max(24px, calc(50vw - 340px));
+        padding: 20px 32px 48px;
         gap: 32px;
     }
 }
 
 .showcase-slide {
-    width: 280px;
-    height: 400px;
+    width: 360px;
+    height: 203px;
     flex-shrink: 0;
     scroll-snap-align: center;
     border-radius: 12px;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
     border: 1px solid rgba(200,168,98,0.15);
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
 }
 
 @media (min-width: 768px) {
-    .showcase-slide { width: 340px; height: 480px; }
+    .showcase-slide { width: 480px; height: 270px; }
 }
 
 .showcase-slide:hover {

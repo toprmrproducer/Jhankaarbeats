@@ -1914,8 +1914,8 @@
                         animation-play-state: paused;
                     }
                     .showcase-slide {
-                        flex: 0 0 240px;
-                        height: 320px;
+                        flex: 0 0 480px;
+                        height: 270px;
                         border-radius: 16px;
                         overflow: hidden;
                         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -1933,10 +1933,10 @@
                     }
                     @keyframes autoScrollTrack {
                         0% { transform: translateX(0); }
-                        100% { transform: translateX(calc(-50% - 12px)); }
+                        100% { transform: translateX(-50%); }
                     }
                     @media (max-width: 768px) {
-                        .showcase-slide { flex: 0 0 200px; height: 280px; }
+                        .showcase-slide { flex: 0 0 320px; height: 180px; }
                         .showcase-track { animation-duration: 25s; }
                     }
                 </style>
