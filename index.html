@@ -2204,7 +2204,7 @@
                             </div>
                             
                             <div class="showcase-item" data-img="4" style="display:flex; justify-content:flex-start; gap:20px; align-items:center; cursor:pointer;" onmouseover="setPreview(4)" onmouseout="clearPreview()">
-                                <img src="assets/hawaii_shirt.png" alt="thumbnail" style="width:60px; height:60px; border-radius:8px; object-fit:cover; border:1px solid rgba(200,168,98,0.3); flex-shrink:0; filter:hue-rotate(60deg);" />
+                                <img src="assets/womens_floral_shirt.png" alt="thumbnail" style="width:60px; height:60px; border-radius:8px; object-fit:cover; border:1px solid rgba(200,168,98,0.3); flex-shrink:0;" />
                                 <div>
                                     <h4 style="font-family:'Bodoni Moda',serif; font-size:28px; color:#fff; transition:0.3s;" class="sci-title">Floral T-Shirts</h4>
                                     <p style="font-family:'Montserrat',sans-serif; font-size:14px; color:rgba(255,255,255,0.6); margin-top:4px;">Vibrant patterns with comfortable fits</p>
@@ -2242,7 +2242,7 @@
                     <img id="sc-img-1" src="assets/hawaii_shirt.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
                     <img id="sc-img-2" src="assets/hawaii_dress.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
                     <img id="sc-img-3" src="assets/hawaii_linen.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
-                    <img id="sc-img-4" src="https://images.unsplash.com/photo-1572804013427-4d7ca7268217?auto=format&fit=crop&q=80&w=800" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
+                    <img id="sc-img-4" src="assets/womens_floral_shirt.png" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 0.4s ease" />
                     
                     <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.4), transparent); pointer-events:none;"></div>
                 </div>
@@ -2280,13 +2280,20 @@
                         .hosts-container {
                             justify-content: flex-start;
                             overflow-x: auto;
-                            padding-bottom: 20px;
-                            /* Hide scrollbar for cleaner look but keep it scrollable */
-                            -ms-overflow-style: none;  
-                            scrollbar-width: none;  
+                            padding: 0 24px 24px;
+                            gap: 24px;
+                            scroll-snap-type: x mandatory;
+                            -webkit-overflow-scrolling: touch;
+                            -ms-overflow-style: none;
+                            scrollbar-width: none;
                         }
                         .hosts-container::-webkit-scrollbar {
                             display: none;
+                        }
+                        .hosts-container .host-item {
+                            flex: 0 0 220px !important;
+                            min-width: 220px !important;
+                            scroll-snap-align: center;
                         }
                     }
                 </style>
@@ -2520,7 +2527,7 @@
 
         function startAudio() {
             // Force-load the MP3 directly (works even with <source> child elements)
-            const mp3path = 'Senorita%20Zindagi%20Na%20Milegi%20Dobara%20320%20Kbps.mp3';
+            const mp3path = 'senorita.mp3';
             audioEl.volume = 0.20;
             if (!audioEl.src || audioEl.src === window.location.href) {
                 audioEl.src = mp3path;
