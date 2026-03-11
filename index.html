@@ -2089,6 +2089,7 @@
                 <div class="reveal">
                     <p class="section-tag" style="margin-bottom:8px">What Awaits</p>
                     <h2 class="section-heading" style="font-size: 42px;">The Sundowner<br/>Soirée</h2>
+                    <p style="font-family:'Montserrat',sans-serif; font-size:14px; letter-spacing:0.2em; color:rgba(0,0,0,0.45); margin-top:16px; text-transform:uppercase;">✦ Click / Tap a card to Reveal ✦</p>
                 </div>
                 
                 <div class="evening-grid reveal d1" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
@@ -2298,92 +2299,62 @@
                     <div class="section-rule" style="margin-top: 24px; margin-bottom: 48px;"><span></span><i></i><span></span></div>
                 </div>
                 
-                <!-- Auto-gliding hosts marquee -->
-                <div class="hosts-marquee-outer reveal d1">
-                    <div class="hosts-marquee-track">
-                        <!-- SET 1 -->
-                        <div class="host-item">
-                            <span class="host-name">Rohit Ankita Doshi</span>
-                            <span class="host-role">President</span>
-                        </div>
-                        <div class="host-divider">✦</div>
-                        <div class="host-item">
-                            <span class="host-name">Asha Tarun Chajjed</span>
-                            <span class="host-role">Secretary</span>
-                        </div>
-                        <div class="host-divider">✦</div>
-                        <div class="host-item">
-                            <span class="host-name">Ravi Manisha Hirani</span>
-                            <span class="host-role">Entertainment Director</span>
-                        </div>
-                        <div class="host-divider">✦</div>
-                        <!-- SET 2 (duplicate for seamless loop) -->
-                        <div class="host-item">
-                            <span class="host-name">Rohit Ankita Doshi</span>
-                            <span class="host-role">President</span>
-                        </div>
-                        <div class="host-divider">✦</div>
-                        <div class="host-item">
-                            <span class="host-name">Asha Tarun Chajjed</span>
-                            <span class="host-role">Secretary</span>
-                        </div>
-                        <div class="host-divider">✦</div>
-                        <div class="host-item">
-                            <span class="host-name">Ravi Manisha Hirani</span>
-                            <span class="host-role">Entertainment Director</span>
-                        </div>
-                        <div class="host-divider">✦</div>
+                <!-- Static hosts card grid -->
+                <div class="hosts-card-grid reveal d1">
+                    <div class="host-card">
+                        <span class="host-card-name">Rohit Ankita Doshi</span>
+                        <span class="host-card-role">President</span>
+                    </div>
+                    <div class="host-card">
+                        <span class="host-card-name">Asha Tarun Chajjed</span>
+                        <span class="host-card-role">Secretary</span>
+                    </div>
+                    <div class="host-card host-card--full">
+                        <span class="host-card-name">Ravi Manisha Hirani</span>
+                        <span class="host-card-role">Entertainment Director</span>
                     </div>
                 </div>
                 <style>
-                    .hosts-marquee-outer {
-                        width: 100%;
-                        overflow: hidden;
-                        padding: 16px 0 40px;
-                        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-                        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+                    .hosts-card-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                        max-width: 700px;
+                        margin: 0 auto;
+                        padding: 0 24px 48px;
                     }
-                    .hosts-marquee-track {
-                        display: flex;
-                        align-items: center;
-                        gap: 48px;
-                        width: max-content;
-                        animation: hostsScroll 18s linear infinite;
+                    /* Third card spans full width on mobile */
+                    .host-card--full { grid-column: 1 / -1; }
+                    @media (min-width: 640px) {
+                        .hosts-card-grid { grid-template-columns: 1fr 1fr 1fr; }
+                        .host-card--full { grid-column: auto; }
                     }
-                    .hosts-marquee-track:hover {
-                        animation-play-state: paused;
-                    }
-                    @keyframes hostsScroll {
-                        0%   { transform: translateX(0); }
-                        100% { transform: translateX(-50%); }
-                    }
-                    .host-item {
+                    .host-card {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
                         text-align: center;
-                        gap: 8px;
-                        flex-shrink: 0;
-                        min-width: 180px;
+                        gap: 10px;
+                        padding: 28px 20px;
+                        background: rgba(255,255,255,0.6);
+                        border: 1px solid rgba(200,168,98,0.25);
+                        border-radius: 16px;
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
                     }
-                    .host-item .host-name {
+                    .host-card-name {
                         font-family: 'Bodoni Moda', serif;
-                        font-size: 20px;
+                        font-size: 24px;
                         color: var(--dark);
+                        line-height: 1.3;
                         display: block;
                     }
-                    .host-item .host-role {
+                    .host-card-role {
                         font-family: 'Montserrat', sans-serif;
-                        font-size: 11px;
-                        letter-spacing: 0.25em;
+                        font-size: 13px;
+                        letter-spacing: 0.2em;
                         text-transform: uppercase;
                         color: var(--gold);
                         display: block;
-                    }
-                    .host-divider {
-                        color: rgba(200, 168, 98, 0.4);
-                        font-size: 18px;
-                        flex-shrink: 0;
                     }
                 </style>
             </section>
