@@ -150,23 +150,47 @@ function initCursor() {
 // 3D CARD TILT
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function initCardTilt() {
-    if (window.innerWidth < 768) return; // Disable 3D tilt on mobile
-    
     const cards = document.querySelectorAll('.tilt-card');
+    
     cards.forEach(card => {
-        card.addEventListener('mousemove', e => {
+        const handleMove = (clientX, clientY) => {
             const rect = card.getBoundingClientRect();
-            const relX = (e.clientX - rect.left) / rect.width - 0.5;
-            const relY = (e.clientY - rect.top) / rect.height - 0.5;
+            const relX = (clientX - rect.left) / rect.width - 0.5;
+            const relY = (clientY - rect.top) / rect.height - 0.5;
             // Max rotate: +/- 8 deg
             card.style.transform = `perspective(1000px) rotateX(${relY * -16}deg) rotateY(${relX * 16}deg) scale(1.02)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
+        };
+
+        const handleReset = () => {
             card.style.transition = 'transform 0.4s ease'; // Ensure smooth snap back
             card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-            // Remove transition after it finished so hover applies instantly
             setTimeout(() => { card.style.transition = ''; }, 400);
+        };
+
+        // Desktop
+        card.addEventListener('mousemove', e => {
+            if (window.innerWidth < 768) return;
+            handleMove(e.clientX, e.clientY);
+        });
+        card.addEventListener('mouseleave', () => {
+            if (window.innerWidth < 768) return;
+            handleReset();
+        });
+
+        // Mobile Touch Interaction
+        card.addEventListener('touchmove', e => {
+            if (window.innerWidth >= 768) return;
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY);
+        }, { passive: true });
+        
+        card.addEventListener('touchend', () => {
+            if (window.innerWidth >= 768) return;
+            handleReset();
+        });
+        card.addEventListener('touchcancel', () => {
+            if (window.innerWidth >= 768) return;
+            handleReset();
         });
     });
 }

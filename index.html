@@ -1724,7 +1724,7 @@
      Replace 'music.mp3' with your actual file path
 ══════════════════════════════ -->
     <audio id="bg-audio" loop preload="auto">
-        <source src="Senorita%20Zindagi%20Na%20Milegi%20Dobara%20320%20Kbps.mp3" type="audio/mpeg">
+        <source src="senorita.mp3" type="audio/mpeg">
     </audio>
 
     <!-- ══════════════════════════════
@@ -2236,6 +2236,30 @@
 
             <!-- ─── HOSTS ─── -->
             <section class="section warm">
+                <style>
+                    .hosts-container {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        gap: 40px;
+                        width: 100%;
+                        max-width: 1000px;
+                        margin: 0 auto;
+                    }
+                    @media (max-width: 768px) {
+                        .hosts-container {
+                            justify-content: flex-start;
+                            overflow-x: auto;
+                            padding-bottom: 20px;
+                            /* Hide scrollbar for cleaner look but keep it scrollable */
+                            -ms-overflow-style: none;  
+                            scrollbar-width: none;  
+                        }
+                        .hosts-container::-webkit-scrollbar {
+                            display: none;
+                        }
+                    }
+                </style>
                 <div class="reveal">
                     <p class="section-tag" style="border-color:rgba(200,168,98,0.2); color: rgba(200,168,98,0.8); font-size:14px;">The Dream Team</p>
                     <h2 class="section-heading" style="font-size: 56px;">Your Hosts</h2>
@@ -2243,7 +2267,7 @@
                 </div>
                 
                 <!-- Horizontal layout forced flex inline -->
-                <div class="reveal d1" style="display: flex; flex-direction: row; justify-content: center; gap: 40px; width: 100%; max-width: 1000px; margin: 0 auto;">
+                <div class="reveal d1 hosts-container">
                     <div class="host-item" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; flex: 1; min-width: 250px;">
                         <div style="width:140px; height:140px; border-radius:50%; background:var(--green); border:2px solid var(--gold); overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.3); margin:0 auto;">
                             <img src="images/Untitled%20design%20(10).png" style="width:100%; height:100%; object-fit:cover;" />
@@ -2274,70 +2298,7 @@
                 </div>
             </section>
             
-            <!-- ─── THE SOUNDTRACK ─── -->
-            <section class="section dark">
-                <div class="reveal">
-                    <p class="section-tag">THE MUSIC</p>
-                    <h2 class="section-heading">The Soundtrack of the Night</h2>
-                    
-                    <div style="display:flex; justify-content:center; gap:2px; height:28px; margin: 18px auto 36px; align-items:flex-end;">
-                        <div style="width:3px; background:var(--gold); animation: eqBar 1s infinite alternate; animation-delay: 0s;"></div>
-                        <div style="width:3px; background:var(--gold); animation: eqBar 1.2s infinite alternate; animation-delay: 0.1s;"></div>
-                        <div style="width:3px; background:var(--gold); animation: eqBar 0.9s infinite alternate; animation-delay: 0.2s;"></div>
-                        <div style="width:3px; background:var(--gold); animation: eqBar 1.1s infinite alternate; animation-delay: 0.3s;"></div>
-                        <div style="width:3px; background:var(--gold); animation: eqBar 1.3s infinite alternate; animation-delay: 0.4s;"></div>
-                    </div>
-                </div>
 
-                <div class="reveal d1" style="display:flex; flex-direction:column; gap:12px; max-width:480px; margin:0 auto;">
-                    <div class="music-card" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
-                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">01</div>
-                        <div>
-                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Bollywood Classics</div>
-                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">For the ones who know every word</div>
-                        </div>
-                    </div>
-                    
-                    <div class="music-card" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
-                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">02</div>
-                        <div>
-                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Sunset Beats</div>
-                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">As the golden hour arrives</div>
-                        </div>
-                    </div>
-
-                    <div class="music-card reveal d2" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
-                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">03</div>
-                        <div>
-                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Dance Floor</div>
-                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">When the night takes over</div>
-                        </div>
-                    </div>
-
-                    <div class="music-card reveal d3" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
-                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">04</div>
-                        <div>
-                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Antakshari Rounds</div>
-                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">The game that never gets old</div>
-                        </div>
-                    </div>
-
-                    <div class="music-card reveal d3" style="display:flex; align-items:center; gap:20px; padding:16px 22px; background:rgba(255,255,255,0.03); border:1px solid rgba(200,168,98,0.12); border-radius:3px; border-left:2px solid var(--gold); transition:background 0.3s, border-left-color 0.3s;" onmouseover="this.style.background='rgba(200,168,98,0.05)'; this.style.borderLeftColor='var(--gold-hi)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderLeftColor='var(--gold)';">
-                        <div style="font-family:'Bodoni Moda',serif; font-size:22px; color:var(--gold-lo); width:28px; text-align:center; font-weight:300;">05</div>
-                        <div>
-                            <div style="font-family:'Bodoni Moda',serif; font-size:16px; color:var(--cream); font-weight:300;">Late Night Mix</div>
-                            <div style="font-family:'Montserrat',sans-serif; font-size:7px; color:var(--gold); letter-spacing:0.3em; text-transform:uppercase; margin-top:3px;">The last song you'll remember</div>
-                        </div>
-                    </div>
-                </div>
-
-                <style>
-                    @keyframes eqBar {
-                        0% { height: 8px; }
-                        100% { height: 28px; }
-                    }
-                </style>
-            </section>
 
 
 
